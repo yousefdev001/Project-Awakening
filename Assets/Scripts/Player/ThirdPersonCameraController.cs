@@ -1,3 +1,4 @@
+using Awakening.Core;
 using Awakening.Input;
 using UnityEngine;
 
@@ -89,6 +90,11 @@ namespace Awakening.Player
         private void LateUpdate()
         {
             if (_target == null) return;
+
+            if (GameStateManager.Instance != null && GameStateManager.Instance.CurrentState != GameState.Gameplay)
+            {
+                return;
+            }
 
             HandleInput();
             UpdateCameraTransform();

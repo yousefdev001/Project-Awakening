@@ -1,3 +1,4 @@
+using Awakening.Core;
 using Awakening.Input;
 using UnityEngine;
 
@@ -72,6 +73,11 @@ namespace Awakening.Player
 
         private void Update()
         {
+            if (GameStateManager.Instance != null && GameStateManager.Instance.CurrentState != GameState.Gameplay)
+            {
+                return;
+            }
+
             CheckGrounded();
             HandleGravity();
             HandleLocomotion();
