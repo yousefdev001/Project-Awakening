@@ -120,11 +120,19 @@ namespace Awakening.Player
         {
             Vector2 input = _inputProvider != null ? _inputProvider.MoveInput : Vector2.zero;
 
+            // Calculate stat speed scaling
+            float speedScale = 1.0f;
+            if (PlayerStats.Instance != null && _config.baseSpeed > 0.01f)
+            {
+                speedScale = PlayerStats.Instance.Speed / _config.baseSpeed;
+            }
+
             // Target movement speed
             float targetSpeed = 0f;
             if (input.sqrMagnitude > 0.01f)
             {
-                targetSpeed = _inputProvider.IsSprinting ? _config.sprintSpeed : _config.walkSpeed;
+                float baseLocomotionSpeed = _inputProvider.IsSprinting ? _config.sprintSpeed : _config.walkSpeed;
+                targetSpeed = baseLocomotionSpeed * speedScale;
             }
 
             // Smooth acceleration and deceleration

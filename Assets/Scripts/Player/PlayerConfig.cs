@@ -13,6 +13,9 @@ namespace Awakening.Player
         [Tooltip("Standard walking speed in m/s")]
         public float walkSpeed = 4.5f;
 
+        [Tooltip("Base speed reference for stat scaling")]
+        public float baseSpeed = 5.0f;
+
         [Tooltip("Sprint speed in m/s when holding sprint")]
         public float sprintSpeed = 8.0f;
 
