@@ -14,9 +14,6 @@ namespace Awakening.Player
         [SerializeField] private Transform _target;
         [SerializeField] private CameraConfig _config;
 
-        [Header("Cursor Settings")]
-        [SerializeField] private bool _lockCursorOnStart = true;
-
         private IInputProvider _inputProvider;
         private float _currentYaw;
         private float _currentPitch = 15.0f;

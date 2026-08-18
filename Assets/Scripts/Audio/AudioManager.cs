@@ -27,6 +27,16 @@ namespace Awakening.Audio
             set => _sfxVolume = Mathf.Clamp01(value);
         }
 
+        public float BGMVolume
+        {
+            get => _bgmVolume;
+            set
+            {
+                _bgmVolume = Mathf.Clamp01(value);
+                if (_bgmSource != null) _bgmSource.volume = _masterVolume * _bgmVolume;
+            }
+        }
+
         private const int PoolSize = 10;
         private List<AudioSource> _sfxPool = new List<AudioSource>();
         private AudioSource _bgmSource;

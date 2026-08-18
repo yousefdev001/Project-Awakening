@@ -1,3 +1,4 @@
+using Awakening.Combat;
 using Awakening.Interaction;
 using Awakening.Monsters;
 using UnityEngine;

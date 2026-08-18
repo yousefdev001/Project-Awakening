@@ -97,7 +97,6 @@ namespace Awakening.NPCs
             if (screenPos.z > 0 && screenPos.z < 22f)
             {
                 float tagW = 160;
-                float tagH = 34;
                 float x = screenPos.x - (tagW / 2);
                 float y = Screen.height - screenPos.y;
 

@@ -37,7 +37,7 @@ namespace Awakening.GameDebug
                 if (GoblinChiefBoss.Instance != null)
                 {
                     HealthSystem hs = GoblinChiefBoss.Instance.GetComponent<HealthSystem>();
-                    if (hs != null) hs.TakeDamage(new DamageData(100f, DamageType.True));
+                    if (hs != null) hs.TakeDamage(new DamageData(100f, DamageType.TrueDamage));
                 }
             }
 
@@ -48,7 +48,7 @@ namespace Awakening.GameDebug
                     HealthSystem hs = GoblinChiefBoss.Instance.GetComponent<HealthSystem>();
                     if (hs != null && hs.CurrentHealth > 300f)
                     {
-                        hs.TakeDamage(new DamageData(hs.CurrentHealth - 290f, DamageType.True));
+                        hs.TakeDamage(new DamageData(hs.CurrentHealth - 290f, DamageType.TrueDamage));
                     }
                 }
             }
@@ -59,7 +59,7 @@ namespace Awakening.GameDebug
                 if (GoblinChiefBoss.Instance != null)
                 {
                     HealthSystem hs = GoblinChiefBoss.Instance.GetComponent<HealthSystem>();
-                    if (hs != null) hs.TakeDamage(new DamageData(9999f, DamageType.True));
+                    if (hs != null) hs.TakeDamage(new DamageData(9999f, DamageType.TrueDamage));
                 }
             }
 
