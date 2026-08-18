@@ -107,10 +107,16 @@ namespace Awakening.Monsters
 
             Debug.Log($"<color=#FF5555>[Monster Defeated]</color> Defeated <b>[{_data.rank}] {_data.monsterName}</b>! Rewarding <b>+{_data.xpReward:F0} XP</b>.");
 
-            // Award XP to player
-            if (PlayerProgression.Instance != null)
+            // 1. Award XP to player
+            if (PlayerProgression.Instance != null && _data != null)
             {
                 PlayerProgression.Instance.AddXP(_data.xpReward);
+            }
+
+            // 2. Notify Quest System of kill
+            if (Quests.QuestManager.Instance != null && _data != null)
+            {
+                Quests.QuestManager.Instance.RecordMonsterKill(_data.monsterID);
             }
 
             StartCoroutine(DeathDisappearRoutine());
