@@ -78,6 +78,14 @@ namespace Awakening.Player
                 return;
             }
 
+            // If Inventory is open, apply gravity only and skip locomotion
+            if (Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen)
+            {
+                CheckGrounded();
+                HandleGravity();
+                return;
+            }
+
             CheckGrounded();
             HandleGravity();
             HandleLocomotion();

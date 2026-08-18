@@ -96,7 +96,15 @@ namespace Awakening.Player
                 return;
             }
 
-            HandleInput();
+            // Only rotate camera when inventory is closed and cursor is locked
+            bool isInventoryOpen = Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen;
+            bool isCursorFree = Cursor.lockState != CursorLockMode.Locked || Cursor.visible;
+
+            if (!isInventoryOpen && !isCursorFree)
+            {
+                HandleInput();
+            }
+
             UpdateCameraTransform();
         }
 
