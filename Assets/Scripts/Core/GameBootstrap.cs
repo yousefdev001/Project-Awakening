@@ -51,6 +51,10 @@ namespace Awakening.Core
 
         private void EnsureUIHUDs()
         {
+            EnsureComponent<MainMenuUI>();
+            EnsureComponent<PauseMenuUI>();
+            EnsureComponent<GameOverUI>();
+            EnsureComponent<VictoryCreditsUI>();
             EnsureComponent<DialogueUI>();
             EnsureComponent<InteractionPromptUI>();
             EnsureComponent<QuestTrackerHUD>();
