@@ -113,13 +113,19 @@ namespace Awakening.Combat
                 return false;
             }
 
-            // 3. Must not be paused
+            // 3. Dialogue must be closed
+            if (GameUI.DialogueUI.Instance != null && GameUI.DialogueUI.Instance.IsInDialogue)
+            {
+                return false;
+            }
+
+            // 4. Must not be paused
             if (Time.timeScale <= 0.001f)
             {
                 return false;
             }
 
-            // 4. Must be alive
+            // 5. Must be alive
             if (_healthSystem != null && _healthSystem.IsDead)
             {
                 return false;

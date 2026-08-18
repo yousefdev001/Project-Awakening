@@ -78,8 +78,11 @@ namespace Awakening.Player
                 return;
             }
 
-            // If Inventory is open, apply gravity only and skip locomotion
-            if (Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen)
+            // If Inventory or Dialogue is open, apply gravity only and skip locomotion
+            bool isBusyWithUI = (Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen)
+                || (GameUI.DialogueUI.Instance != null && GameUI.DialogueUI.Instance.IsInDialogue);
+
+            if (isBusyWithUI)
             {
                 CheckGrounded();
                 HandleGravity();
