@@ -67,6 +67,7 @@ namespace Awakening.GameDebug
             HealthSystem hp = monsterObj.AddComponent<HealthSystem>();
             MonsterStats stats = monsterObj.AddComponent<MonsterStats>();
             MonsterCombat combat = monsterObj.AddComponent<MonsterCombat>();
+            MonsterController ai = monsterObj.AddComponent<MonsterController>();
 
             // Assign Data
             stats.SetMonsterData(data);
