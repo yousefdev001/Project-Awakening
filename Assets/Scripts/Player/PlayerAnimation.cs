@@ -54,9 +54,6 @@ namespace Awakening.Player
             if (_inputProvider != null)
             {
                 _inputProvider.OnJump += TriggerJumpAnimation;
-                _inputProvider.OnAttack += TriggerAttackAnimation;
-                _inputProvider.OnHeavyAttack += TriggerHeavyAttackAnimation;
-                _inputProvider.OnDodge += TriggerDodgeAnimation;
             }
         }
 
@@ -65,9 +62,6 @@ namespace Awakening.Player
             if (_inputProvider != null)
             {
                 _inputProvider.OnJump -= TriggerJumpAnimation;
-                _inputProvider.OnAttack -= TriggerAttackAnimation;
-                _inputProvider.OnHeavyAttack -= TriggerHeavyAttackAnimation;
-                _inputProvider.OnDodge -= TriggerDodgeAnimation;
             }
         }
 
@@ -97,6 +91,9 @@ namespace Awakening.Player
 
         public void TriggerJumpAnimation()
         {
+            if (Core.GameStateManager.Instance != null && Core.GameStateManager.Instance.CurrentState != Core.GameState.Gameplay) return;
+            if (Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen) return;
+
             if (_animator != null && _movement.IsGrounded)
             {
                 _animator.SetTrigger(JumpTriggerHash);
