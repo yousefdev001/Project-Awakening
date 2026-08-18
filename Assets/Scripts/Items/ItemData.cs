@@ -240,13 +240,13 @@ namespace Awakening.Items
             {
                 case "CURR_GOLD": return CreateGoldPreset(20);
                 case "MAT_SLIME_JELLY": return CreateSlimeJellyPreset();
-                case "MAT_WOLF_PELT": return CreateWolfPeltPreset();
+                case "MAT_WOLF_FUR": return CreateWolfFurPreset();
                 case "MAT_WOLF_FANG": return CreateWolfFangPreset();
                 case "CONS_HEALTH_POTION": return CreateHealthPotionPreset();
                 case "CONS_MANA_POTION": return CreateManaPotionPreset();
-                case "WEAP_IRON_SWORD": return CreateIronLongswordPreset();
+                case "WEAP_IRON_LONGSWORD": return CreateIronLongswordPreset();
                 case "WEAP_HUNTER_BOW": return CreateHunterBowPreset();
-                case "WEAP_MAGE_STAFF": return CreateMageStaffPreset();
+                case "WEAP_ARCANE_STAFF": return CreateArcaneStaffPreset();
                 case "ARMOR_KNIGHT_PLATE": return CreateKnightArmorPreset();
                 case "WEAP_GOBLIN_DAGGER": return CreateGoblinDaggerPreset();
                 default: return CreateHealthPotionPreset();

@@ -14,6 +14,7 @@ namespace Awakening.Player
         [SerializeField] private int _gold = 50;
 
         public int Gold => _gold;
+        public int CurrentGold => _gold;
 
         public event Action<int, int> OnGoldChanged; // (currentGold, changeAmount)
 

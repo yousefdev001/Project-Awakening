@@ -249,6 +249,12 @@ namespace Awakening.Inventory
             OnInventoryChanged?.Invoke();
         }
 
+        public void ClearInventory()
+        {
+            InitializeSlots();
+            OnInventoryChanged?.Invoke();
+        }
+
         public int GetFirstEmptySlotIndex()
         {
             for (int i = 0; i < _slots.Count; i++)

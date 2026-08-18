@@ -16,6 +16,7 @@ namespace Awakening.Professions
 
         public ProfessionData CurrentProfession => _currentProfession;
         public bool HasProfession => _currentProfession != null;
+        public bool HasAwakened => HasProfession;
         public string ProfessionName => HasProfession ? _currentProfession.professionName : "Unawakened";
         public ProfessionRank CurrentRank => HasProfession ? _currentProfession.rank : ProfessionRank.RankC;
 
