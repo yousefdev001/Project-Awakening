@@ -109,6 +109,7 @@ namespace Awakening.Core
             EnsureComponentOnObj<HitboxDetector>(playerObj);
             EnsureComponentOnObj<PlayerCombat>(playerObj);
             EnsureComponentOnObj<PlayerAnimation>(playerObj);
+            EnsureComponentOnObj<PlayerVisualPresentation>(playerObj);
             EnsureComponentOnObj<Awakening.Professions.ProfessionSystem>(playerObj);
             EnsureComponentOnObj<InventorySystem>(playerObj);
             EnsureComponentOnObj<Awakening.Equipment.EquipmentSystem>(playerObj);

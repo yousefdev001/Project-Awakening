@@ -67,7 +67,11 @@ namespace Awakening.Player
 
         private void Update()
         {
-            if (_animator == null) return;
+            if (_animator == null)
+            {
+                _animator = GetComponentInChildren<Animator>();
+                if (_animator == null) return;
+            }
 
             UpdateLocomotionParameters();
         }
