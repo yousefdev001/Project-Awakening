@@ -107,20 +107,30 @@ namespace Awakening.Player
 
         private void CheckGrounded()
         {
-            // Position check sphere at bottom center of the CharacterController
-            Vector3 spherePosition = new Vector3(
-                transform.position.x,
-                transform.position.y - _config.groundCheckOffset,
-                transform.position.z
-            );
+            // Prefer CharacterController native grounded state
+            if (_characterController != null && _characterController.isGrounded)
+            {
+                IsGrounded = true;
+            }
+            else
+            {
+                // Fallback sphere cast below character feet ignoring player's own layer
+                Vector3 feetPos = transform.position + Vector3.down * (_characterController != null ? (_characterController.height * 0.5f - _characterController.radius) : 0.8f);
+                Collider[] hits = Physics.OverlapSphere(feetPos, _config.groundCheckRadius, _config.groundLayers, QueryTriggerInteraction.Ignore);
+                
+                bool foundSolidGround = false;
+                foreach (var hit in hits)
+                {
+                    if (hit.gameObject != gameObject && !hit.transform.IsChildOf(transform))
+                    {
+                        foundSolidGround = true;
+                        break;
+                    }
+                }
+                IsGrounded = foundSolidGround;
+            }
 
-            IsGrounded = Physics.CheckSphere(
-                spherePosition,
-                _config.groundCheckRadius,
-                _config.groundLayers,
-                QueryTriggerInteraction.Ignore
-            );
-
+            // Clamp vertical velocity only when falling/grounded (never cancel jump upward burst)
             if (IsGrounded && _verticalVelocity < 0.0f)
             {
                 _verticalVelocity = _config.groundedDownwardForce;
@@ -129,7 +139,8 @@ namespace Awakening.Player
 
         private void HandleGravity()
         {
-            if (!IsGrounded)
+            // Apply gravity whenever in air OR moving upward in jump arc
+            if (!IsGrounded || _verticalVelocity > 0.0f)
             {
                 if (_verticalVelocity > _config.terminalVelocity)
                 {

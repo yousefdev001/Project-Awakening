@@ -142,11 +142,10 @@ namespace Awakening.Player
 
             if (look.sqrMagnitude > 0.001f)
             {
-                float sensitivity = _config != null ? _config.mouseSensitivity : 2.5f;
-                if (sensitivity < 0.5f) sensitivity = 2.5f;
+                float sensitivity = 1.6f; // Snappy, responsive PC mouse orbit
 
-                _targetYaw += look.x * sensitivity * 0.1f;
-                _targetPitch -= look.y * sensitivity * 0.1f;
+                _targetYaw += look.x * sensitivity;
+                _targetPitch -= look.y * sensitivity;
 
                 float minP = _config != null ? _config.minPitch : -25f;
                 float maxP = _config != null ? _config.maxPitch : 75f;
@@ -156,9 +155,12 @@ namespace Awakening.Player
 
         private void UpdateCameraTransform()
         {
-            // Smoothly interpolate yaw and pitch
-            _currentYaw = Mathf.Lerp(_currentYaw, _targetYaw, Time.deltaTime * _config.rotationSharpness);
-            _currentPitch = Mathf.Lerp(_currentPitch, _targetPitch, Time.deltaTime * _config.rotationSharpness);
+            // Smoothly interpolate yaw and pitch with high responsiveness
+            float sharpness = _config != null ? _config.rotationSharpness : 20.0f;
+            if (sharpness < 15.0f) sharpness = 20.0f;
+
+            _currentYaw = Mathf.Lerp(_currentYaw, _targetYaw, Time.deltaTime * sharpness);
+            _currentPitch = Mathf.Lerp(_currentPitch, _targetPitch, Time.deltaTime * sharpness);
 
             Quaternion rotation = Quaternion.Euler(_currentPitch, _currentYaw, 0f);
 
