@@ -25,14 +25,24 @@ namespace Awakening.Professions
         [Tooltip("Theme color associated with the rank")]
         public Color rankColor = new Color(0.2f, 0.8f, 0.3f); // Green for C
 
-        [Header("Stat Modifiers")]
-        [Tooltip("Flat bonus Max Health granted to the player")]
-        public float bonusMaxHealth = 30f;
+        [Header("Primary Attribute Modifiers")]
+        [Tooltip("Bonus Vitality (increases Max Health)")]
+        public float bonusVitality = 5f;
 
-        [Tooltip("Flat bonus Attack power granted to the player")]
+        [Tooltip("Bonus Intelligence (increases Max Mana & Magic)")]
+        public float bonusIntelligence = 0f;
+
+        [Header("Direct Combat Pool Modifiers")]
+        [Tooltip("Direct bonus Max Health added")]
+        public float bonusMaxHealth = 20f;
+
+        [Tooltip("Direct bonus Max Mana added")]
+        public float bonusMaxMana = 0f;
+
+        [Tooltip("Flat bonus Attack power")]
         public float bonusAttack = 10f;
 
-        [Tooltip("Flat bonus Defense granted to the player")]
+        [Tooltip("Flat bonus Defense")]
         public float bonusDefense = 8f;
 
         [Tooltip("Flat bonus Speed added to the player")]

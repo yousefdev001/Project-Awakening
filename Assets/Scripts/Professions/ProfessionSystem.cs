@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Awakening.Professions
 {
     /// <summary>
-    /// Manages the player's current profession, rank, and integrates stat modifiers with PlayerStats.
+    /// Manages the player's current profession, rank, and integrates attribute modifiers with PlayerStats.
     /// </summary>
     [RequireComponent(typeof(PlayerStats))]
     public class ProfessionSystem : MonoBehaviour
@@ -60,8 +60,13 @@ namespace Awakening.Professions
         {
             if (_playerStats == null) return;
 
-            // Update PlayerStats bonus fields
+            // Update Primary Attributes
+            _playerStats.BonusVitality = profession.bonusVitality;
+            _playerStats.BonusIntelligence = profession.bonusIntelligence;
+
+            // Update Direct Pools & Combat Stats
             _playerStats.BonusMaxHealth = profession.bonusMaxHealth;
+            _playerStats.BonusMaxMana = profession.bonusMaxMana;
             _playerStats.BonusAttack = profession.bonusAttack;
             _playerStats.BonusDefense = profession.bonusDefense;
             _playerStats.BonusSpeed = profession.bonusSpeed;
@@ -75,7 +80,10 @@ namespace Awakening.Professions
             _currentProfession = null;
             if (_playerStats != null)
             {
+                _playerStats.BonusVitality = 0f;
+                _playerStats.BonusIntelligence = 0f;
                 _playerStats.BonusMaxHealth = 0f;
+                _playerStats.BonusMaxMana = 0f;
                 _playerStats.BonusAttack = 0f;
                 _playerStats.BonusDefense = 0f;
                 _playerStats.BonusSpeed = 0f;
@@ -91,9 +99,12 @@ namespace Awakening.Professions
             data.professionID = "PROF_SWORDSMAN";
             data.professionName = "Swordsman";
             data.rank = ProfessionRank.RankC;
-            data.description = "A versatile warrior skilled in blade arts and physical combat.";
+            data.description = "A versatile warrior skilled in blade arts and physical combat with high Vitality and Defense.";
             data.rankColor = new Color(0.3f, 0.85f, 0.4f); // Emerald Green
-            data.bonusMaxHealth = 40f;
+            data.bonusVitality = 8f;
+            data.bonusIntelligence = 1f;
+            data.bonusMaxHealth = 30f;
+            data.bonusMaxMana = 10f;
             data.bonusAttack = 12f;
             data.bonusDefense = 10f;
             data.bonusSpeed = 0f;
@@ -109,9 +120,12 @@ namespace Awakening.Professions
             data.professionID = "PROF_HUNTER";
             data.professionName = "Hunter";
             data.rank = ProfessionRank.RankB;
-            data.description = "A swift marksman excelling in rapid movement and ranged archery.";
+            data.description = "A swift marksman excelling in rapid movement, ranged archery, and balanced energy.";
             data.rankColor = new Color(0.2f, 0.6f, 1.0f); // Sapphire Blue
-            data.bonusMaxHealth = 25f;
+            data.bonusVitality = 4f;
+            data.bonusIntelligence = 6f;
+            data.bonusMaxHealth = 20f;
+            data.bonusMaxMana = 40f;
             data.bonusAttack = 22f;
             data.bonusDefense = 4f;
             data.bonusSpeed = 1.5f; // Fast movement bonus
@@ -127,9 +141,12 @@ namespace Awakening.Professions
             data.professionID = "PROF_BATTLE_MAGE";
             data.professionName = "Battle Mage";
             data.rank = ProfessionRank.RankA;
-            data.description = "An elite spell-warrior who wields devastating elemental magic.";
+            data.description = "An elite spell-warrior wielding devastating elemental magic with massive Intelligence and Mana.";
             data.rankColor = new Color(0.85f, 0.35f, 1.0f); // Mystic Purple
-            data.bonusMaxHealth = 60f;
+            data.bonusVitality = 6f;
+            data.bonusIntelligence = 18f;
+            data.bonusMaxHealth = 40f;
+            data.bonusMaxMana = 120f;
             data.bonusAttack = 38f;
             data.bonusDefense = 12f;
             data.bonusSpeed = 0.5f;

@@ -66,17 +66,20 @@ namespace Awakening.Input
 
         private void InitializeInputActions()
         {
-            // Move: 2D Vector composite (WASD / Left Stick)
+            // Move: 2D Vector composite (WASD & Arrow Keys & Gamepad Left Stick)
             _moveAction = new InputAction("Move", InputActionType.Value);
             _moveAction.AddCompositeBinding("2DVector")
                 .With("Up", "<Keyboard>/w")
                 .With("Down", "<Keyboard>/s")
                 .With("Left", "<Keyboard>/a")
-                .With("Right", "<Keyboard>/d")
+                .With("Right", "<Keyboard>/d");
+
+            _moveAction.AddCompositeBinding("2DVector")
                 .With("Up", "<Keyboard>/upArrow")
                 .With("Down", "<Keyboard>/downArrow")
                 .With("Left", "<Keyboard>/leftArrow")
                 .With("Right", "<Keyboard>/rightArrow");
+
             _moveAction.AddBinding("<Gamepad>/leftStick");
 
             // Look: 2D Vector (Mouse Delta / Right Stick)
