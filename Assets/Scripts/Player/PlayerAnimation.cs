@@ -40,11 +40,6 @@ namespace Awakening.Player
             {
                 _animator = GetComponentInChildren<Animator>();
             }
-
-            if (_animator != null)
-            {
-                _animator.applyRootMotion = false;
-            }
         }
 
         private void Start()
