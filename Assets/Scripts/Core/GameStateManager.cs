@@ -35,6 +35,12 @@ namespace Awakening.Core
 
             CurrentState = _initialState;
             PreviousState = _initialState;
+
+            // Auto-mount master GameBootstrap if not present
+            if (GetComponent<GameBootstrap>() == null)
+            {
+                gameObject.AddComponent<GameBootstrap>();
+            }
         }
 
         private void Start()
