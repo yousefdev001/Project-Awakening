@@ -67,18 +67,15 @@ namespace Awakening.Player
                 _currentFocusPoint = _target.position + _config.targetOffset;
             }
 
-            if (_lockCursorOnStart)
-            {
-                LockCursor(true);
-            }
+            // Keep cursor visible and unlocked for RPG interaction
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (hasFocus && _lockCursorOnStart)
-            {
-                LockCursor(true);
-            }
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         private void LockCursor(bool locked)
@@ -96,11 +93,9 @@ namespace Awakening.Player
                 return;
             }
 
-            // Only rotate camera when inventory is closed and cursor is locked
+            // Only rotate camera when inventory is closed
             bool isInventoryOpen = Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen;
-            bool isCursorFree = Cursor.lockState != CursorLockMode.Locked || Cursor.visible;
-
-            if (!isInventoryOpen && !isCursorFree)
+            if (!isInventoryOpen)
             {
                 HandleInput();
             }

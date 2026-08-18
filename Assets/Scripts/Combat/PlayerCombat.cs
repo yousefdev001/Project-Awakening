@@ -101,31 +101,25 @@ namespace Awakening.Combat
 
         private bool CanPerformCombatAction()
         {
-            // 1. Check GameState
+            // 1. Must be in Gameplay state
             if (GameStateManager.Instance != null && GameStateManager.Instance.CurrentState != GameState.Gameplay)
             {
                 return false;
             }
 
-            // 2. Check Inventory Open
+            // 2. Inventory must be closed
             if (Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen)
             {
                 return false;
             }
 
-            // 3. Check TimeScale (Paused)
-            if (Time.timeScale == 0f)
+            // 3. Must not be paused
+            if (Time.timeScale <= 0.001f)
             {
                 return false;
             }
 
-            // 4. Check Cursor state (If cursor is unlocked/visible for UI interaction, disable combat strikes)
-            if (Cursor.lockState != CursorLockMode.Locked || Cursor.visible)
-            {
-                return false;
-            }
-
-            // 5. Check Player Health
+            // 4. Must be alive
             if (_healthSystem != null && _healthSystem.IsDead)
             {
                 return false;

@@ -6,7 +6,7 @@ namespace Awakening.Core
 {
     /// <summary>
     /// Manages the top-level GameState machine and handles time-scale / pause transitions.
-    /// Broadcasts events for UI and gameplay controllers to react to state changes.
+    /// Ensures mouse cursor remains visible and interactive across gameplay and UI screens.
     /// </summary>
     public class GameStateManager : MonoBehaviour
     {
@@ -94,32 +94,25 @@ namespace Awakening.Core
 
         private void ApplyStateEffects(GameState state)
         {
+            // Keep cursor always visible and unlocked for smooth UI interaction
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             switch (state)
             {
                 case GameState.Gameplay:
                     Time.timeScale = 1.0f;
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
                     break;
 
                 case GameState.Paused:
                     Time.timeScale = 0.0f;
-                    Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
                     break;
 
                 case GameState.MainMenu:
                 case GameState.CharacterCreation:
                 case GameState.GameOver:
-                    Time.timeScale = 1.0f;
-                    Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
-                    break;
-
                 case GameState.Awakening:
                     Time.timeScale = 1.0f;
-                    Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
                     break;
             }
         }
