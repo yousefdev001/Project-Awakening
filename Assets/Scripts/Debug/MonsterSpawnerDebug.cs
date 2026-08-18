@@ -68,6 +68,7 @@ namespace Awakening.GameDebug
             MonsterStats stats = monsterObj.AddComponent<MonsterStats>();
             MonsterCombat combat = monsterObj.AddComponent<MonsterCombat>();
             MonsterController ai = monsterObj.AddComponent<MonsterController>();
+            MonsterLootSpawner loot = monsterObj.AddComponent<MonsterLootSpawner>();
 
             // Assign Data
             stats.SetMonsterData(data);
