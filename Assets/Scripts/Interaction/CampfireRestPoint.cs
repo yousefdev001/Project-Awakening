@@ -23,6 +23,11 @@ namespace Awakening.Interaction
                 PlayerStats.Instance.Heal(PlayerStats.Instance.MaxHealth);
                 PlayerStats.Instance.RestoreMana(PlayerStats.Instance.MaxMana);
                 Debug.Log("<color=#FF8800>🔥 [Campfire Rest]</color> The warm embers soothe your soul. <b>HP & MP Fully Restored!</b>");
+
+                if (Persistence.SaveSystem.Instance != null)
+                {
+                    Persistence.SaveSystem.Instance.SaveGame();
+                }
             }
         }
 

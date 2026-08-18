@@ -24,6 +24,17 @@ namespace Awakening.Core
 
         private IInputProvider _inputProvider;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void AutoInitializeGameState()
+        {
+            if (Instance == null && FindFirstObjectByType<GameStateManager>() == null)
+            {
+                GameObject bootObj = new GameObject("--- GAME_BOOTSTRAPPER ---");
+                DontDestroyOnLoad(bootObj);
+                bootObj.AddComponent<GameStateManager>();
+            }
+        }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
