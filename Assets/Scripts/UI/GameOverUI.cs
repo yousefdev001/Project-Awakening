@@ -26,12 +26,29 @@ namespace Awakening.GameUI
 
         private void Start()
         {
+            SubscribeToPlayer();
+        }
+
+        private void Update()
+        {
+            if (PlayerStats.Instance != null && PlayerStats.Instance.IsDead)
+            {
+                if (GameStateManager.Instance != null && GameStateManager.Instance.CurrentState != GameState.GameOver)
+                {
+                    HandlePlayerDeath();
+                }
+            }
+        }
+
+        private void SubscribeToPlayer()
+        {
             PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
             if (player != null)
             {
                 HealthSystem hs = player.GetComponent<HealthSystem>();
                 if (hs != null)
                 {
+                    hs.OnDeath -= HandlePlayerDeath;
                     hs.OnDeath += HandlePlayerDeath;
                 }
             }
@@ -115,8 +132,14 @@ namespace Awakening.GameUI
             {
                 CharacterController cc = player.GetComponent<CharacterController>();
                 if (cc != null) cc.enabled = false;
-                player.transform.position = new Vector3(0, 0.5f, 2.0f); // Village Plaza
+                player.transform.position = new Vector3(0, 0.5f, 2.0f); // Village Plaza Campfire
                 if (cc != null) cc.enabled = true;
+
+                HealthSystem hs = player.GetComponent<HealthSystem>();
+                if (hs != null)
+                {
+                    hs.Heal(hs.MaxHealth);
+                }
             }
 
             if (PlayerStats.Instance != null)
@@ -124,6 +147,8 @@ namespace Awakening.GameUI
                 PlayerStats.Instance.Heal(PlayerStats.Instance.MaxHealth);
                 PlayerStats.Instance.RestoreMana(PlayerStats.Instance.MaxMana);
             }
+
+            Time.timeScale = 1.0f;
 
             if (GameStateManager.Instance != null)
             {

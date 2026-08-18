@@ -78,6 +78,11 @@ namespace Awakening.Player
                 return;
             }
 
+            if (_cameraTransform == null && Camera.main != null)
+            {
+                _cameraTransform = Camera.main.transform;
+            }
+
             // If Inventory or Dialogue is open, apply gravity only and skip locomotion
             bool isBusyWithUI = (Inventory.InventorySystem.Instance != null && Inventory.InventorySystem.Instance.IsOpen)
                 || (GameUI.DialogueUI.Instance != null && GameUI.DialogueUI.Instance.IsInDialogue);
@@ -87,6 +92,12 @@ namespace Awakening.Player
                 CheckGrounded();
                 HandleGravity();
                 return;
+            }
+
+            // Keyboard Space Jump fallback
+            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
+                HandleJump();
             }
 
             CheckGrounded();
@@ -129,7 +140,22 @@ namespace Awakening.Player
 
         private void HandleLocomotion()
         {
-            Vector2 input = _inputProvider != null ? _inputProvider.MoveInput : Vector2.zero;
+            Vector2 input = Vector2.zero;
+            if (_inputProvider != null)
+            {
+                input = _inputProvider.MoveInput;
+            }
+
+            // Direct keyboard fallback for 100% reliable WASD response
+            if (input.sqrMagnitude < 0.001f && UnityEngine.InputSystem.Keyboard.current != null)
+            {
+                var kb = UnityEngine.InputSystem.Keyboard.current;
+                if (kb.wKey.isPressed) input.y += 1;
+                if (kb.sKey.isPressed) input.y -= 1;
+                if (kb.aKey.isPressed) input.x -= 1;
+                if (kb.dKey.isPressed) input.x += 1;
+                input = input.normalized;
+            }
 
             // Calculate stat speed scaling
             float speedScale = 1.0f;
@@ -144,7 +170,10 @@ namespace Awakening.Player
 
             if (input.sqrMagnitude > 0.01f)
             {
-                float baseLocomotionSpeed = _inputProvider.IsSprinting ? _config.sprintSpeed : _config.walkSpeed;
+                bool isSprinting = (_inputProvider != null && _inputProvider.IsSprinting) ||
+                                  (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.leftShiftKey.isPressed);
+
+                float baseLocomotionSpeed = isSprinting ? _config.sprintSpeed : _config.walkSpeed;
                 targetSpeed = baseLocomotionSpeed * speedScale;
 
                 // Calculate direction relative to camera

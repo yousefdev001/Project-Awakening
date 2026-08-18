@@ -97,6 +97,22 @@ namespace Awakening.Combat
             {
                 CurrentComboIndex = 0;
             }
+
+            if (CanPerformCombatAction())
+            {
+                if (UnityEngine.InputSystem.Mouse.current != null)
+                {
+                    var mouse = UnityEngine.InputSystem.Mouse.current;
+                    if (mouse.leftButton.wasPressedThisFrame) HandleLightAttack();
+                    if (mouse.rightButton.wasPressedThisFrame) HandleHeavyAttack();
+                }
+
+                if (UnityEngine.InputSystem.Keyboard.current != null)
+                {
+                    var kb = UnityEngine.InputSystem.Keyboard.current;
+                    if (kb.eKey.wasPressedThisFrame) HandleSkill();
+                }
+            }
         }
 
         private bool CanPerformCombatAction()

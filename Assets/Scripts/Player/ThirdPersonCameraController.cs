@@ -83,7 +83,28 @@ namespace Awakening.Player
 
         private void LateUpdate()
         {
-            if (_target == null) return;
+            if (_target == null)
+            {
+                GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+                if (playerObj != null)
+                {
+                    _target = playerObj.transform;
+                }
+                else
+                {
+                    PlayerMovement movement = FindFirstObjectByType<PlayerMovement>();
+                    if (movement != null) _target = movement.transform;
+                }
+
+                if (_target != null)
+                {
+                    _currentFocusPoint = _target.position + _config.targetOffset;
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             if (GameStateManager.Instance != null && GameStateManager.Instance.CurrentState != GameState.Gameplay)
             {
@@ -102,7 +123,21 @@ namespace Awakening.Player
 
         private void HandleInput()
         {
-            Vector2 look = _inputProvider != null ? _inputProvider.LookInput : Vector2.zero;
+            Vector2 look = Vector2.zero;
+            if (_inputProvider != null)
+            {
+                look = _inputProvider.LookInput;
+            }
+
+            // Mouse delta fallback (supports both mouse look and right-click drag)
+            if (look.sqrMagnitude < 0.001f && UnityEngine.InputSystem.Mouse.current != null)
+            {
+                var mouse = UnityEngine.InputSystem.Mouse.current;
+                if (mouse.rightButton.isPressed || Cursor.lockState == CursorLockMode.Locked)
+                {
+                    look = mouse.delta.ReadValue() * 0.1f;
+                }
+            }
 
             if (look.sqrMagnitude > 0.001f)
             {
