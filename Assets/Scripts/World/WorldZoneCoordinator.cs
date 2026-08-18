@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Awakening.World
 {
     /// <summary>
-    /// Master coordinator managing the entire world layout (Village, Whispering Forest, and Nest Dungeons).
+    /// Master coordinator managing the entire world layout (Village, Whispering Forest, and Goblin Nest Dungeon).
     /// </summary>
     public class WorldZoneCoordinator : MonoBehaviour
     {
@@ -44,13 +44,20 @@ namespace Awakening.World
                 ForestGenerator.Instance.BuildForest();
             }
 
-            Debug.Log("<color=#00FFAA>🌍 [WorldZoneCoordinator]</color> Complete Project Awakening MVP World generated!");
+            // 3. Build Goblin Nest Dungeon
+            if (NestGenerator.Instance != null)
+            {
+                NestGenerator.Instance.BuildNest();
+            }
+
+            Debug.Log("<color=#00FFAA>🌍 [WorldZoneCoordinator]</color> Complete Project Awakening MVP World & Dungeon generated!");
         }
 
         public void ClearFullWorld()
         {
             if (VillageGenerator.Instance != null) VillageGenerator.Instance.ClearVillage();
             if (ForestGenerator.Instance != null) ForestGenerator.Instance.ClearForest();
+            if (NestGenerator.Instance != null) NestGenerator.Instance.ClearNest();
         }
     }
 }
