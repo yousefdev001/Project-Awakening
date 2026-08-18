@@ -87,25 +87,45 @@ namespace Awakening.Items
         private void CollectItem()
         {
             if (_isBeingCollected) return;
-            _isBeingCollected = true;
 
             if (_itemData != null)
             {
                 if (_itemData.itemType == ItemType.Gold)
                 {
+                    _isBeingCollected = true;
                     int totalGold = _itemData.goldValue * _quantity;
                     if (PlayerWallet.Instance != null)
                     {
                         PlayerWallet.Instance.AddGold(totalGold);
                     }
+                    Destroy(gameObject);
                 }
                 else
                 {
-                    Debug.Log($"<color=#00FFAA>[Loot Pickup]</color> Collected <b>{_quantity}x [{_itemData.rarity}] {_itemData.itemName}</b>!");
+                    // Attempt adding to Inventory
+                    if (Inventory.InventorySystem.Instance != null)
+                    {
+                        bool added = Inventory.InventorySystem.Instance.AddItem(_itemData, _quantity);
+                        if (added)
+                        {
+                            _isBeingCollected = true;
+                            Destroy(gameObject);
+                        }
+                        // If bag is full, it stays on the ground!
+                    }
+                    else
+                    {
+                        _isBeingCollected = true;
+                        Debug.Log($"<color=#00FFAA>[Loot Pickup]</color> Collected <b>{_quantity}x [{_itemData.rarity}] {_itemData.itemName}</b>!");
+                        Destroy(gameObject);
+                    }
                 }
             }
-
-            Destroy(gameObject);
+            else
+            {
+                _isBeingCollected = true;
+                Destroy(gameObject);
+            }
         }
 
         private void OnGUI()
