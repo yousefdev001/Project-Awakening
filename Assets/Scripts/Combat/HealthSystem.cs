@@ -94,6 +94,9 @@ namespace Awakening.Combat
                 }
             }
 
+            // Spawn Blood Splatter VFX
+            VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.BloodSplatter, transform.position + Vector3.up * 0.8f);
+
             // Trigger hit animation if available
             if (_playerAnimation != null && !IsDead)
             {

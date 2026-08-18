@@ -190,6 +190,10 @@ namespace Awakening.Monsters
             transform.position = startPos;
             if (_renderer != null) _renderer.material.color = IsEnraged ? _enrageColor : _normalColor;
 
+            // Spawn Ground Slam Shockwave VFX & Audio
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.GroundSlam);
+            VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.GroundSlamShockwave, transform.position);
+
             // Damage player if in AoE
             if (_playerTransform != null && _playerDamageable != null)
             {
@@ -234,6 +238,10 @@ namespace Awakening.Monsters
             {
                 _renderer.material.color = _enrageColor;
             }
+
+            // Play SFX & Enrage Aura VFX
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.BossEnrage);
+            VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.BossEnrageAura, transform.position + Vector3.up * 1.0f);
 
             Debug.Log("<color=#FF0000>🔥🔥🔥 [BOSS ENRAGED!] 🔥🔥🔥</color> <b>Gorgar enters Blood Frenzy!</b> Speed +40%, Attack +50%!");
             OnEnragedChanged?.Invoke(true);

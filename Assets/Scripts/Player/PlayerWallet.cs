@@ -38,6 +38,7 @@ namespace Awakening.Player
 
             _gold += amount;
             Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.GoldChink);
+            VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.GoldPickupSparkle, transform.position + Vector3.up * 0.5f);
             Debug.Log($"<color=#FFD700>[PlayerWallet]</color> Collected <b>+{amount} Gold</b>! Total: <b>{_gold} Gold</b>.");
             OnGoldChanged?.Invoke(_gold, amount);
         }

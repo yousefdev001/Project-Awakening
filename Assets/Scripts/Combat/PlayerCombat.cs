@@ -167,6 +167,9 @@ namespace Awakening.Combat
 
             var hits = _hitboxDetector.DetectAndDamageTargets(data);
 
+            // Spawn VFX Sparks
+            VFX.VFXManager.Instance?.SpawnVFX(CurrentComboIndex == 3 ? VFX.VFXType.HeavyCleaveBurst : VFX.VFXType.SlashHitSparks, transform.position + transform.forward * 1.2f + Vector3.up * 0.8f);
+
             Debug.Log($"<color=#FF8800>[Combat]</color> Light Attack ({CurrentComboIndex}/3)! Dealt <b>{finalDamage:F1}</b> dmg to {hits.Count} target(s).");
             OnAttackExecuted?.Invoke(CurrentComboIndex, finalDamage);
         }
@@ -200,6 +203,9 @@ namespace Awakening.Combat
 
             var hits = _hitboxDetector.DetectAndDamageTargets(data);
 
+            // Spawn Heavy Burst VFX
+            VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.HeavyCleaveBurst, transform.position + transform.forward * 1.5f + Vector3.up * 0.8f);
+
             Debug.Log($"<color=#FF2200>[Combat] ★ HEAVY ATTACK! ★</color> Dealt <b>{finalDamage:F1}</b> dmg to {hits.Count} target(s).");
             OnHeavyAttackExecuted?.Invoke(finalDamage);
         }
@@ -217,8 +223,9 @@ namespace Awakening.Combat
         {
             IsDodging = true;
 
-            // Play SFX
+            // Play SFX & Dust Trail VFX
             Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.DodgeWhoosh);
+            VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.DodgeDustTrail, transform.position);
 
             if (_playerAnimation != null)
             {
@@ -250,8 +257,9 @@ namespace Awakening.Combat
 
             LastSkillTime = Time.time;
 
-            // Play SFX
+            // Play SFX & Skill Magic Burst VFX
             Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.SkillCast);
+            VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.SkillMagicBurst, transform.position + transform.forward * 1.2f + Vector3.up * 0.8f);
 
             ProfessionData prof = _professionSystem != null ? _professionSystem.CurrentProfession : null;
             string skillName = prof != null ? prof.skillName : "Basic Power Strike";

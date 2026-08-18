@@ -77,6 +77,7 @@ namespace Awakening.Player
                 UpdateRequiredXP();
 
                 Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.LevelUpFanfare);
+                VFX.VFXManager.Instance?.SpawnVFX(VFX.VFXType.LevelUpPillar, transform.position);
                 Debug.Log($"<color=#00FFAA>[Progression] ★ LEVEL UP! Reached Level {_playerStats.CurrentLevel} ★</color>");
 
                 OnLevelUp?.Invoke(_playerStats.CurrentLevel);

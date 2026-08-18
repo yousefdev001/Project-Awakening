@@ -40,6 +40,7 @@ namespace Awakening.Core
         private void EnsureWorldGenerators()
         {
             EnsureComponent<Awakening.Audio.AudioManager>();
+            EnsureComponent<Awakening.VFX.VFXManager>();
             EnsureComponent<WorldZoneCoordinator>();
             EnsureComponent<VillageGenerator>();
             EnsureComponent<ForestGenerator>();
@@ -58,6 +59,7 @@ namespace Awakening.Core
         private void EnsureDebugPanels()
         {
             EnsureComponent<AudioDebugPanel>();
+            EnsureComponent<VFXDebugPanel>();
             EnsureComponent<VillageDebugControls>();
             EnsureComponent<ForestDebugControls>();
             EnsureComponent<NestDebugControls>();
