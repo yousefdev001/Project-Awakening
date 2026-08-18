@@ -1,10 +1,11 @@
+using Awakening.Equipment;
 using UnityEngine;
 
 namespace Awakening.Items
 {
     /// <summary>
-    /// ScriptableObject defining an Item's properties, value, and effects.
-    /// Data-Driven: Adding new items requires only creating a new asset.
+    /// ScriptableObject defining an Item's properties, economy, and equipment stats.
+    /// Data-Driven: Adding new items, weapons, and armors requires zero C# script modifications.
     /// </summary>
     [CreateAssetMenu(fileName = "NewItem", menuName = "Awakening/Items/Item Data")]
     public class ItemData : ScriptableObject
@@ -29,7 +30,18 @@ namespace Awakening.Items
         public float restoreHealthAmount = 0f;
         public float restoreManaAmount = 0f;
 
-        #region MVP Items Presets Factory
+        [Header("Equipment Attributes (If Applicable)")]
+        public EquipmentSlotType equipmentSlot = EquipmentSlotType.None;
+        public string weaponType = ""; // "Sword", "Bow", "Staff", "Dagger"
+        public float bonusAttack = 0f;
+        public float bonusDefense = 0f;
+        public float bonusMaxHealth = 0f;
+        public float bonusMaxMana = 0f;
+        public float bonusVitality = 0f;
+        public float bonusIntelligence = 0f;
+        public float bonusSpeed = 0f;
+
+        #region MVP Items & Equipment Presets Factory
         public static ItemData CreateGoldPreset(int amount = 10)
         {
             var data = ScriptableObject.CreateInstance<ItemData>();
@@ -90,21 +102,6 @@ namespace Awakening.Items
             return data;
         }
 
-        public static ItemData CreateGoblinDaggerPreset()
-        {
-            var data = ScriptableObject.CreateInstance<ItemData>();
-            data.itemID = "WEAP_GOBLIN_DAGGER";
-            data.itemName = "Goblin Scrap Dagger";
-            data.itemType = ItemType.Weapon;
-            data.rarity = ItemRarity.Uncommon;
-            data.description = "A jagged, crude iron blade salvaged from a goblin warrior.";
-            data.themeColor = new Color(0.85f, 0.4f, 0.2f);
-            data.goldValue = 35;
-            data.isStackable = false;
-            data.maxStackSize = 1;
-            return data;
-        }
-
         public static ItemData CreateHealthPotionPreset()
         {
             var data = ScriptableObject.CreateInstance<ItemData>();
@@ -134,6 +131,104 @@ namespace Awakening.Items
             data.isStackable = true;
             data.maxStackSize = 20;
             data.restoreManaAmount = 50f;
+            return data;
+        }
+
+        // --- Equipment Presets ---
+
+        public static ItemData CreateIronLongswordPreset()
+        {
+            var data = ScriptableObject.CreateInstance<ItemData>();
+            data.itemID = "WEAP_IRON_LONGSWORD";
+            data.itemName = "Iron Longsword";
+            data.itemType = ItemType.Weapon;
+            data.equipmentSlot = EquipmentSlotType.Weapon;
+            data.weaponType = "Sword";
+            data.rarity = ItemRarity.Uncommon;
+            data.description = "A tempered steel longsword with balanced weight. Favored weapon of Swordsmen (+20% Affinity).";
+            data.themeColor = new Color(0.7f, 0.85f, 1.0f);
+            data.goldValue = 60;
+            data.isStackable = false;
+            data.maxStackSize = 1;
+            data.bonusAttack = 18f;
+            data.bonusDefense = 3f;
+            return data;
+        }
+
+        public static ItemData CreateHunterBowPreset()
+        {
+            var data = ScriptableObject.CreateInstance<ItemData>();
+            data.itemID = "WEAP_HUNTER_BOW";
+            data.itemName = "Hunter Recurve Bow";
+            data.itemType = ItemType.Weapon;
+            data.equipmentSlot = EquipmentSlotType.Weapon;
+            data.weaponType = "Bow";
+            data.rarity = ItemRarity.Rare;
+            data.description = "A flexible elm recurve bow crafted for rapid marksmanship. Favored by Hunters (+20% Affinity).";
+            data.themeColor = new Color(0.3f, 0.9f, 0.6f);
+            data.goldValue = 85;
+            data.isStackable = false;
+            data.maxStackSize = 1;
+            data.bonusAttack = 16f;
+            data.bonusSpeed = 1.0f;
+            return data;
+        }
+
+        public static ItemData CreateArcaneStaffPreset()
+        {
+            var data = ScriptableObject.CreateInstance<ItemData>();
+            data.itemID = "WEAP_ARCANE_STAFF";
+            data.itemName = "Arcane Oak Staff";
+            data.itemType = ItemType.Weapon;
+            data.equipmentSlot = EquipmentSlotType.Weapon;
+            data.weaponType = "Staff";
+            data.rarity = ItemRarity.Epic;
+            data.description = "A consecrated staff embedded with an arcane sapphire. Favored by Battle Mages (+25% Affinity).";
+            data.themeColor = new Color(0.8f, 0.4f, 1.0f);
+            data.goldValue = 120;
+            data.isStackable = false;
+            data.maxStackSize = 1;
+            data.bonusAttack = 14f;
+            data.bonusIntelligence = 10f;
+            data.bonusMaxMana = 40f;
+            return data;
+        }
+
+        public static ItemData CreateKnightArmorPreset()
+        {
+            var data = ScriptableObject.CreateInstance<ItemData>();
+            data.itemID = "ARMOR_KNIGHT_PLATE";
+            data.itemName = "Iron Vanguard Plate";
+            data.itemType = ItemType.Armor;
+            data.equipmentSlot = EquipmentSlotType.Armor;
+            data.rarity = ItemRarity.Uncommon;
+            data.description = "Heavy reinforced steel chestplate offering solid protection.";
+            data.themeColor = new Color(0.65f, 0.7f, 0.75f);
+            data.goldValue = 75;
+            data.isStackable = false;
+            data.maxStackSize = 1;
+            data.bonusDefense = 14f;
+            data.bonusMaxHealth = 50f;
+            data.bonusVitality = 4f;
+            return data;
+        }
+
+        public static ItemData CreateGoblinDaggerPreset()
+        {
+            var data = ScriptableObject.CreateInstance<ItemData>();
+            data.itemID = "WEAP_GOBLIN_DAGGER";
+            data.itemName = "Goblin Scrap Dagger";
+            data.itemType = ItemType.Weapon;
+            data.equipmentSlot = EquipmentSlotType.Weapon;
+            data.weaponType = "Dagger";
+            data.rarity = ItemRarity.Uncommon;
+            data.description = "A jagged, crude iron blade salvaged from a goblin warrior.";
+            data.themeColor = new Color(0.85f, 0.4f, 0.2f);
+            data.goldValue = 35;
+            data.isStackable = false;
+            data.maxStackSize = 1;
+            data.bonusAttack = 8f;
+            data.bonusSpeed = 0.5f;
             return data;
         }
         #endregion

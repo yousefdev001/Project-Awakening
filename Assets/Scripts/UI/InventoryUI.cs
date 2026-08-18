@@ -1,3 +1,4 @@
+using Awakening.Equipment;
 using Awakening.Inventory;
 using Awakening.Items;
 using UnityEngine;
@@ -5,8 +6,8 @@ using UnityEngine;
 namespace Awakening.GameUI
 {
     /// <summary>
-    /// Interactive Inventory UI screen.
-    /// Draws a 20-slot grid, item details preview, Use, Drop, and Sort actions.
+    /// Interactive Inventory & Equipment UI screen.
+    /// Draws a 20-slot bag grid, equipped gear slots (Weapon, Armor), Item details, Use, Equip, Drop, and Sort actions.
     /// </summary>
     public class InventoryUI : MonoBehaviour
     {
@@ -15,6 +16,7 @@ namespace Awakening.GameUI
         private void OnGUI()
         {
             InventorySystem inv = InventorySystem.Instance;
+            EquipmentSystem equip = EquipmentSystem.Instance;
             if (inv == null) return;
 
             int screenW = Screen.width;
@@ -29,24 +31,23 @@ namespace Awakening.GameUI
             if (!inv.IsOpen) return;
 
             // Semi-transparent overlay
-            GUI.color = new Color(0f, 0f, 0f, 0.6f);
+            GUI.color = new Color(0f, 0f, 0f, 0.65f);
             GUI.DrawTexture(new Rect(0, 0, screenW, screenH), Texture2D.whiteTexture);
             GUI.color = Color.white;
 
-            // Inventory Window Box
-            int winW = 540;
-            int winH = 380;
+            // Inventory Window Box (Expanded for Equipment)
+            int winW = 680;
+            int winH = 410;
             int winX = (screenW - winW) / 2;
             int winY = (screenH - winH) / 2;
 
-            GUI.Box(new Rect(winX, winY, winW, winH), "🎒 PLAYER INVENTORY (20 SLOTS) - [Tab / I]");
+            GUI.Box(new Rect(winX, winY, winW, winH), "🎒 PLAYER INVENTORY & EQUIPMENT (Phase 16 & 17) - [Tab / I]");
 
             // 1. Grid of 20 Slots (4 rows x 5 cols)
             int cols = 5;
-            int rows = 4;
-            int slotW = 58;
-            int slotH = 58;
-            int startX = winX + 25;
+            int slotW = 56;
+            int slotH = 56;
+            int startX = winX + 20;
             int startY = winY + 45;
             int spacing = 6;
 
@@ -77,14 +78,12 @@ namespace Awakening.GameUI
                 {
                     ItemData item = slot.Item;
                     GUI.color = item.themeColor;
-                    GUI.DrawTexture(new Rect(slotX + 6, slotY + 6, slotW - 12, slotH - 12), Texture2D.whiteTexture);
+                    GUI.DrawTexture(new Rect(slotX + 5, slotY + 5, slotW - 10, slotH - 10), Texture2D.whiteTexture);
                     GUI.color = Color.white;
 
-                    // Short Name
                     string shortName = item.itemName.Length > 8 ? item.itemName.Substring(0, 7) + ".." : item.itemName;
-                    GUI.Label(new Rect(slotX + 2, slotY + 4, slotW - 4, 18), $"<size=8><b>{shortName}</b></size>", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperCenter });
+                    GUI.Label(new Rect(slotX + 2, slotY + 3, slotW - 4, 18), $"<size=8><b>{shortName}</b></size>", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperCenter });
 
-                    // Quantity tag
                     if (slot.Quantity > 1)
                     {
                         GUI.Label(new Rect(slotX + 2, slotY + slotH - 18, slotW - 6, 16), $"<size=9><b>x{slot.Quantity}</b></size>", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.LowerRight });
@@ -92,11 +91,70 @@ namespace Awakening.GameUI
                 }
             }
 
-            // 2. Details & Action Pane (Right column)
-            int detailX = winX + 345;
+            // 2. Equipped Gear Section (Middle-Right Column)
+            int equipX = winX + 335;
+            int equipY = winY + 45;
+            int equipW = 150;
+            int equipH = 280;
+
+            GUI.Box(new Rect(equipX, equipY, equipW, equipH), "⚔️ Equipped Gear");
+
+            // Weapon Slot
+            string wepName = (equip != null && equip.EquippedWeapon != null) ? equip.EquippedWeapon.itemName : "<i>None (Bare Hands)</i>";
+            GUI.Label(new Rect(equipX + 8, equipY + 25, equipW - 16, 20), "<size=10><b>Main Weapon:</b></size>");
+            GUI.Label(new Rect(equipX + 8, equipY + 45, equipW - 16, 20), $"<size=9><color=yellow>{wepName}</color></size>");
+            if (equip != null && equip.EquippedWeapon != null)
+            {
+                if (GUI.Button(new Rect(equipX + 8, equipY + 68, equipW - 16, 20), "Unequip Weapon"))
+                {
+                    equip.UnequipToInventory(EquipmentSlotType.Weapon);
+                }
+            }
+
+            // Armor Slot
+            string armName = (equip != null && equip.EquippedArmor != null) ? equip.EquippedArmor.itemName : "<i>None (Cloth)</i>";
+            GUI.Label(new Rect(equipX + 8, equipY + 95, equipW - 16, 20), "<size=10><b>Chest Armor:</b></size>");
+            GUI.Label(new Rect(equipX + 8, equipY + 115, equipW - 16, 20), $"<size=9><color=cyan>{armName}</color></size>");
+            if (equip != null && equip.EquippedArmor != null)
+            {
+                if (GUI.Button(new Rect(equipX + 8, equipY + 138, equipW - 16, 20), "Unequip Armor"))
+                {
+                    equip.UnequipToInventory(EquipmentSlotType.Armor);
+                }
+            }
+
+            // Affinity Status Badge
+            if (equip != null && equip.HasWeaponAffinity)
+            {
+                GUI.color = new Color(1f, 0.85f, 0.1f);
+                GUI.Box(new Rect(equipX + 8, equipY + 175, equipW - 16, 50), "");
+                GUI.color = Color.white;
+                GUI.Label(new Rect(equipX + 10, equipY + 178, equipW - 20, 45), "<size=9><b>★ WEAPON AFFINITY ★\n<color=#00FFAA>+20% Synergy Boost</color>\n(Weapon matches class)</b></size>", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });
+            }
+
+            // Quick Add Equipment for Testing
+            if (GUI.Button(new Rect(equipX + 8, equipY + 235, 65, 22), "+Sword"))
+            {
+                inv.AddItem(ItemData.CreateIronLongswordPreset(), 1);
+            }
+            if (GUI.Button(new Rect(equipX + 76, equipY + 235, 65, 22), "+Bow"))
+            {
+                inv.AddItem(ItemData.CreateHunterBowPreset(), 1);
+            }
+            if (GUI.Button(new Rect(equipX + 8, equipY + 258, 65, 20), "+Staff"))
+            {
+                inv.AddItem(ItemData.CreateArcaneStaffPreset(), 1);
+            }
+            if (GUI.Button(new Rect(equipX + 76, equipY + 258, 65, 20), "+Armor"))
+            {
+                inv.AddItem(ItemData.CreateKnightArmorPreset(), 1);
+            }
+
+            // 3. Item Details & Actions (Far Right Column)
+            int detailX = winX + 495;
             int detailY = winY + 45;
-            int detailW = 175;
-            int detailH = 250;
+            int detailW = 165;
+            int detailH = 280;
 
             GUI.Box(new Rect(detailX, detailY, detailW, detailH), "Item Details");
 
@@ -109,30 +167,45 @@ namespace Awakening.GameUI
                 ItemData item = selectedSlot.Item;
                 string hexColor = ColorUtility.ToHtmlStringRGB(item.themeColor);
 
-                GUI.Label(new Rect(detailX + 10, detailY + 25, detailW - 20, 22), $"<size=11><b><color=#{hexColor}>{item.itemName}</color></b></size>");
-                GUI.Label(new Rect(detailX + 10, detailY + 45, detailW - 20, 18), $"<size=9>Type: {item.itemType} | [{item.rarity}]</size>");
-                GUI.Label(new Rect(detailX + 10, detailY + 63, detailW - 20, 18), $"<size=9>Quantity: <b>x{selectedSlot.Quantity}</b> | Value: {item.goldValue}🪙</size>");
+                GUI.Label(new Rect(detailX + 8, detailY + 25, detailW - 16, 20), $"<size=11><b><color=#{hexColor}>{item.itemName}</color></b></size>");
+                GUI.Label(new Rect(detailX + 8, detailY + 45, detailW - 16, 18), $"<size=9>[{item.rarity}] {item.itemType}</size>");
+                GUI.Label(new Rect(detailX + 8, detailY + 63, detailW - 16, 18), $"<size=9>Qty: <b>x{selectedSlot.Quantity}</b> | {item.goldValue}🪙</size>");
 
-                GUI.Label(new Rect(detailX + 10, detailY + 85, detailW - 20, 60), $"<size=9><i>{item.description}</i></size>");
+                if (item.bonusAttack > 0 || item.bonusDefense > 0 || item.bonusMaxHealth > 0 || item.bonusMaxMana > 0)
+                {
+                    GUI.Label(new Rect(detailX + 8, detailY + 83, detailW - 16, 30), $"<size=9><b>Stats:</b> +{item.bonusAttack} Atk | +{item.bonusDefense} Def\n+{item.bonusMaxHealth} HP | +{item.bonusMaxMana} MP</size>");
+                }
+
+                GUI.Label(new Rect(detailX + 8, detailY + 115, detailW - 16, 50), $"<size=9><i>{item.description}</i></size>");
 
                 // Action Buttons
-                int btnY = detailY + 155;
-                if (item.itemType == ItemType.Consumable)
+                int btnY = detailY + 175;
+                if (item.equipmentSlot != EquipmentSlotType.None)
                 {
-                    if (GUI.Button(new Rect(detailX + 10, btnY, detailW - 20, 26), "🧪 USE ITEM"))
+                    if (GUI.Button(new Rect(detailX + 8, btnY, detailW - 16, 26), "⚔️ EQUIP GEAR"))
+                    {
+                        if (equip != null)
+                        {
+                            equip.EquipFromInventory(_selectedSlotIndex);
+                        }
+                    }
+                }
+                else if (item.itemType == ItemType.Consumable)
+                {
+                    if (GUI.Button(new Rect(detailX + 8, btnY, detailW - 16, 26), "🧪 USE ITEM"))
                     {
                         inv.UseItem(_selectedSlotIndex);
                     }
                 }
 
-                if (GUI.Button(new Rect(detailX + 10, btnY + 30, detailW - 20, 24), "🗑️ DROP (1x)"))
+                if (GUI.Button(new Rect(detailX + 8, btnY + 30, detailW - 16, 24), "🗑️ DROP (1x)"))
                 {
                     inv.DropItem(_selectedSlotIndex, 1);
                 }
 
                 if (selectedSlot.Quantity > 1)
                 {
-                    if (GUI.Button(new Rect(detailX + 10, btnY + 56, detailW - 20, 22), $"DROP ALL (x{selectedSlot.Quantity})"))
+                    if (GUI.Button(new Rect(detailX + 8, btnY + 56, detailW - 16, 22), $"DROP ALL (x{selectedSlot.Quantity})"))
                     {
                         inv.DropItem(_selectedSlotIndex, selectedSlot.Quantity);
                     }
@@ -140,16 +213,16 @@ namespace Awakening.GameUI
             }
             else
             {
-                GUI.Label(new Rect(detailX + 10, detailY + 90, detailW - 20, 40), "<size=10><i>Select an item slot to view details or use.</i></size>", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });
+                GUI.Label(new Rect(detailX + 8, detailY + 90, detailW - 16, 40), "<size=10><i>Select an item slot to view details or equip.</i></size>", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });
             }
 
             // Bottom Actions: Sort & Close
-            if (GUI.Button(new Rect(winX + 25, winY + 315, 150, 32), "🔄 SORT INVENTORY"))
+            if (GUI.Button(new Rect(winX + 20, winY + 345, 160, 34), "🔄 SORT INVENTORY"))
             {
                 inv.SortInventory();
             }
 
-            if (GUI.Button(new Rect(winX + winW - 145, winY + 315, 120, 32), "❌ CLOSE"))
+            if (GUI.Button(new Rect(winX + winW - 150, winY + 345, 130, 34), "❌ CLOSE BAG"))
             {
                 inv.CloseInventory();
             }
