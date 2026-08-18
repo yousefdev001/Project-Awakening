@@ -127,57 +127,46 @@ namespace Awakening.Player
                 speedScale = PlayerStats.Instance.Speed / _config.baseSpeed;
             }
 
-            // Target movement speed
+            // Target movement speed and direction
             float targetSpeed = 0f;
+            Vector3 moveDirection = Vector3.zero;
+
             if (input.sqrMagnitude > 0.01f)
             {
                 float baseLocomotionSpeed = _inputProvider.IsSprinting ? _config.sprintSpeed : _config.walkSpeed;
                 targetSpeed = baseLocomotionSpeed * speedScale;
+
+                // Calculate direction relative to camera
+                Vector3 forward = _cameraTransform != null ? _cameraTransform.forward : Vector3.forward;
+                Vector3 right = _cameraTransform != null ? _cameraTransform.right : Vector3.right;
+                forward.y = 0f;
+                right.y = 0f;
+                forward.Normalize();
+                right.Normalize();
+
+                moveDirection = (forward * input.y + right * input.x).normalized;
+
+                // Smoothly rotate character towards movement direction
+                if (moveDirection.sqrMagnitude > 0.001f)
+                {
+                    float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
+                    float smoothAngle = Mathf.SmoothDampAngle(
+                        transform.eulerAngles.y,
+                        targetAngle,
+                        ref _rotationVelocity,
+                        _config.rotationSmoothTime
+                    );
+                    transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
+                }
             }
 
-            // Smooth acceleration and deceleration
-            float currentHorizontalSpeed = new Vector3(_characterController.velocity.x, 0.0f, _characterController.velocity.z).magnitude;
-            float speedOffset = 0.1f;
-            float inputMagnitude = Mathf.Clamp01(input.magnitude);
-
-            if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
-            {
-                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * _config.speedChangeRate);
-                _speed = Mathf.Round(_speed * 1000f) / 1000f;
-            }
-            else
-            {
-                _speed = targetSpeed * inputMagnitude;
-            }
-
+            // Smooth speed transitions with MoveTowards to prevent any sudden spikes
+            _speed = Mathf.MoveTowards(_speed, targetSpeed, _config.speedChangeRate * 2.0f * Time.deltaTime);
             CurrentSpeed = _speed;
 
-            Vector3 moveDirection = Vector3.zero;
-
-            // Rotate towards direction of movement relative to camera
-            if (input.sqrMagnitude > 0.01f)
-            {
-                Vector3 inputDirection = new Vector3(input.x, 0.0f, input.y).normalized;
-
-                float cameraYaw = _cameraTransform != null ? _cameraTransform.eulerAngles.y : 0f;
-                _targetRotationAngle = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cameraYaw;
-
-                float smoothAngle = Mathf.SmoothDampAngle(
-                    transform.eulerAngles.y,
-                    _targetRotationAngle,
-                    ref _rotationVelocity,
-                    _config.rotationSmoothTime
-                );
-
-                transform.rotation = Quaternion.Euler(0.0f, smoothAngle, 0.0f);
-
-                // Movement vector relative to the target angle
-                moveDirection = Quaternion.Euler(0.0f, _targetRotationAngle, 0.0f) * Vector3.forward;
-            }
-
             // Final motion: Horizontal locomotion + Vertical gravity/jump
-            Vector3 finalMotion = (moveDirection.normalized * _speed + new Vector3(0.0f, _verticalVelocity, 0.0f)) * Time.deltaTime;
-            _characterController.Move(finalMotion);
+            Vector3 motion = (moveDirection * _speed) + (Vector3.up * _verticalVelocity);
+            _characterController.Move(motion * Time.deltaTime);
 
             HorizontalVelocity = new Vector3(_characterController.velocity.x, 0f, _characterController.velocity.z);
         }
