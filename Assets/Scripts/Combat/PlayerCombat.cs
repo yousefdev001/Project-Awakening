@@ -147,6 +147,9 @@ namespace Awakening.Combat
             float baseDamage = _playerStats != null ? _playerStats.Attack : 15.0f;
             float finalDamage = baseDamage * multiplier;
 
+            // Play SFX
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.AttackSlash);
+
             // Trigger Animation
             if (_playerAnimation != null)
             {
@@ -178,6 +181,9 @@ namespace Awakening.Combat
 
             float baseDamage = _playerStats != null ? _playerStats.Attack : 15.0f;
             float finalDamage = baseDamage * 2.2f; // Heavy strike deals 220%
+
+            // Play SFX
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.HeavyCleave);
 
             if (_playerAnimation != null)
             {
@@ -211,6 +217,9 @@ namespace Awakening.Combat
         {
             IsDodging = true;
 
+            // Play SFX
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.DodgeWhoosh);
+
             if (_playerAnimation != null)
             {
                 _playerAnimation.TriggerDodgeAnimation();
@@ -240,6 +249,9 @@ namespace Awakening.Combat
             }
 
             LastSkillTime = Time.time;
+
+            // Play SFX
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.SkillCast);
 
             ProfessionData prof = _professionSystem != null ? _professionSystem.CurrentProfession : null;
             string skillName = prof != null ? prof.skillName : "Basic Power Strike";

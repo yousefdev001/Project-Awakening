@@ -37,6 +37,7 @@ namespace Awakening.Player
             if (amount <= 0) return;
 
             _gold += amount;
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.GoldChink);
             Debug.Log($"<color=#FFD700>[PlayerWallet]</color> Collected <b>+{amount} Gold</b>! Total: <b>{_gold} Gold</b>.");
             OnGoldChanged?.Invoke(_gold, amount);
         }

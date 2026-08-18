@@ -54,6 +54,9 @@ namespace Awakening.Interaction
             if (_isOpened) return;
             _isOpened = true;
 
+            // Play SFX
+            Audio.AudioManager.Instance?.PlaySound(Audio.SoundType.ChestOpen);
+
             // Visual open feedback: turn gold/yellow and scale lid
             if (_renderer != null && _renderer.material != null)
             {
