@@ -66,6 +66,18 @@ namespace Awakening.Inventory
             }
         }
 
+        private void Update()
+        {
+            if (UnityEngine.InputSystem.Keyboard.current != null)
+            {
+                var kb = UnityEngine.InputSystem.Keyboard.current;
+                if (kb.iKey.wasPressedThisFrame || kb.tabKey.wasPressedThisFrame)
+                {
+                    ToggleInventory();
+                }
+            }
+        }
+
         private void InitializeSlots()
         {
             _slots.Clear();

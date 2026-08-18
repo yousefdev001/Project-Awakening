@@ -67,6 +67,12 @@ namespace Awakening.Interaction
             }
 
             ScanForInteractables();
+
+            // Direct keyboard F key detection fallback
+            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.fKey.wasPressedThisFrame)
+            {
+                HandleInteract();
+            }
         }
 
         private void ScanForInteractables()

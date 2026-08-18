@@ -37,31 +37,42 @@ namespace Awakening.Player
 
         private void SetupVisualModel()
         {
-            // 1. Hide root primitive capsule renderer if present
-            MeshRenderer rootRenderer = GetComponent<MeshRenderer>();
-            if (rootRenderer != null)
+        private void SetupVisualModel()
+        {
+            if (_animatorController == null)
             {
-                rootRenderer.enabled = false;
+                _animatorController = Resources.Load<RuntimeAnimatorController>("Animations/PlayerAnimatorController");
             }
 
-            // 2. Locate or instantiate 3D Humanoid Model
+            MeshRenderer rootRenderer = GetComponent<MeshRenderer>();
+
+            // 1. Locate or instantiate 3D Humanoid Model
             Transform modelChild = transform.Find("CharacterModel");
             if (modelChild == null)
             {
-                // Attempt to load X Bot from Resources or instantiate attached model
+                // Attempt to load X Bot from Resources
                 GameObject modelPrefab = Resources.Load<GameObject>("Models/X Bot");
                 if (modelPrefab != null)
                 {
                     GameObject modelInstance = Instantiate(modelPrefab, transform);
                     modelInstance.name = "CharacterModel";
-                    modelInstance.transform.localPosition = new Vector3(0, -0.9f, 0); // Align feet with bottom of CharacterController
+                    modelInstance.transform.localPosition = new Vector3(0, -0.95f, 0); // Align feet with bottom of CharacterController
                     modelInstance.transform.localRotation = Quaternion.identity;
                     modelChild = modelInstance.transform;
+
+                    // Ensure all renderers are visible
+                    foreach (var rend in modelInstance.GetComponentsInChildren<Renderer>())
+                    {
+                        rend.enabled = true;
+                    }
                 }
             }
 
             if (modelChild != null)
             {
+                // Hide root capsule only if 3D model successfully loaded
+                if (rootRenderer != null) rootRenderer.enabled = false;
+
                 CharacterAnimator = modelChild.GetComponent<Animator>();
                 if (CharacterAnimator == null)
                 {
@@ -70,10 +81,15 @@ namespace Awakening.Player
             }
             else
             {
+                // Keep root capsule visible as fallback
+                if (rootRenderer != null)
+                {
+                    rootRenderer.enabled = true;
+                }
                 CharacterAnimator = GetComponentInChildren<Animator>();
             }
 
-            // 3. Configure Animator and apply controller
+            // 2. Configure Animator and apply controller
             if (CharacterAnimator != null)
             {
                 CharacterAnimator.applyRootMotion = false;
@@ -84,7 +100,7 @@ namespace Awakening.Player
                 }
             }
 
-            // 4. Initialize Hand & Gear Sockets
+            // 3. Initialize Hand & Gear Sockets
             SetupEquipmentSockets(modelChild);
         }
 

@@ -129,21 +129,28 @@ namespace Awakening.Player
                 look = _inputProvider.LookInput;
             }
 
-            // Mouse delta fallback (supports both mouse look and right-click drag)
+            // Read mouse delta directly for standard third-person orbital camera
             if (look.sqrMagnitude < 0.001f && UnityEngine.InputSystem.Mouse.current != null)
             {
                 var mouse = UnityEngine.InputSystem.Mouse.current;
-                if (mouse.rightButton.isPressed || Cursor.lockState == CursorLockMode.Locked)
+                Vector2 delta = mouse.delta.ReadValue();
+                if (delta.sqrMagnitude > 0.001f)
                 {
-                    look = mouse.delta.ReadValue() * 0.1f;
+                    look = delta;
                 }
             }
 
             if (look.sqrMagnitude > 0.001f)
             {
-                _targetYaw += look.x * _config.mouseSensitivity;
-                _targetPitch -= look.y * _config.mouseSensitivity;
-                _targetPitch = Mathf.Clamp(_targetPitch, _config.minPitch, _config.maxPitch);
+                float sensitivity = _config != null ? _config.mouseSensitivity : 2.5f;
+                if (sensitivity < 0.5f) sensitivity = 2.5f;
+
+                _targetYaw += look.x * sensitivity * 0.1f;
+                _targetPitch -= look.y * sensitivity * 0.1f;
+
+                float minP = _config != null ? _config.minPitch : -25f;
+                float maxP = _config != null ? _config.maxPitch : 75f;
+                _targetPitch = Mathf.Clamp(_targetPitch, minP, maxP);
             }
         }
 
