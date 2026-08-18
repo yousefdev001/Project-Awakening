@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Awakening.Core;
+using Awakening.Player;
 using UnityEngine;
 
 namespace Awakening.Professions
@@ -83,7 +84,7 @@ namespace Awakening.Professions
                 yield return null;
             }
 
-            // 3. Roll Random Profession
+            // 3. Roll Random Profession (Generate without applying until Embrace)
             if (ProfessionRandomizer.Instance != null)
             {
                 RolledProfession = ProfessionRandomizer.Instance.RollAndAssignProfession();
@@ -91,6 +92,10 @@ namespace Awakening.Professions
             else
             {
                 RolledProfession = ProfessionSystem.CreateSwordsmanPreset();
+                if (ProfessionSystem.Instance != null)
+                {
+                    ProfessionSystem.Instance.AssignProfession(RolledProfession);
+                }
             }
 
             // 4. Rank Reveal
@@ -110,21 +115,41 @@ namespace Awakening.Professions
         {
             CurrentStep = AwakeningStep.Completed;
 
-            // Refill player health and mana upon successful awakening
-            if (Player.PlayerStats.Instance != null)
+            // 1. Explicitly ensure Profession and Stats are applied and synced
+            if (RolledProfession != null)
             {
-                Player.PlayerStats.Instance.Heal(Player.PlayerStats.Instance.MaxHealth);
-                Player.PlayerStats.Instance.RestoreMana(Player.PlayerStats.Instance.MaxMana);
+                if (ProfessionSystem.Instance != null)
+                {
+                    ProfessionSystem.Instance.AssignProfession(RolledProfession);
+                }
+                else if (PlayerStats.Instance != null)
+                {
+                    PlayerStats.Instance.BonusVitality = RolledProfession.bonusVitality;
+                    PlayerStats.Instance.BonusIntelligence = RolledProfession.bonusIntelligence;
+                    PlayerStats.Instance.BonusMaxHealth = RolledProfession.bonusMaxHealth;
+                    PlayerStats.Instance.BonusMaxMana = RolledProfession.bonusMaxMana;
+                    PlayerStats.Instance.BonusAttack = RolledProfession.bonusAttack;
+                    PlayerStats.Instance.BonusDefense = RolledProfession.bonusDefense;
+                    PlayerStats.Instance.BonusSpeed = RolledProfession.bonusSpeed;
+                    PlayerStats.Instance.RecalculateStats(true);
+                }
             }
 
-            // Return to normal gameplay
+            // 2. Refill player health and mana upon successful awakening
+            if (PlayerStats.Instance != null)
+            {
+                PlayerStats.Instance.Heal(PlayerStats.Instance.MaxHealth);
+                PlayerStats.Instance.RestoreMana(PlayerStats.Instance.MaxMana);
+            }
+
+            // 3. Return to normal gameplay
             if (GameStateManager.Instance != null)
             {
                 GameStateManager.Instance.SetState(GameState.Gameplay);
             }
 
             OnAwakeningCompleted?.Invoke(RolledProfession);
-            Debug.Log("<color=#55FF55>[Awakening Rite]</color> Awakening ceremony concluded! Returning to gameplay.");
+            Debug.Log("<color=#55FF55>[Awakening Rite]</color> Awakening ceremony concluded! Returning to gameplay with boosted stats.");
 
             CurrentStep = AwakeningStep.Idle;
         }

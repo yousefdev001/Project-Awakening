@@ -7,7 +7,6 @@ namespace Awakening.Professions
     /// <summary>
     /// Manages the player's current profession, rank, and integrates attribute modifiers with PlayerStats.
     /// </summary>
-    [RequireComponent(typeof(PlayerStats))]
     public class ProfessionSystem : MonoBehaviour
     {
         public static ProfessionSystem Instance { get; private set; }
@@ -33,14 +32,26 @@ namespace Awakening.Professions
             }
             Instance = this;
 
-            _playerStats = GetComponent<PlayerStats>();
+            AcquirePlayerStats();
         }
 
         private void Start()
         {
+            AcquirePlayerStats();
+
             if (_currentProfession != null)
             {
                 ApplyProfessionModifiers(_currentProfession);
+            }
+        }
+
+        private void AcquirePlayerStats()
+        {
+            if (_playerStats == null)
+            {
+                _playerStats = GetComponent<PlayerStats>() 
+                    ?? PlayerStats.Instance 
+                    ?? FindFirstObjectByType<PlayerStats>();
             }
         }
 
@@ -58,7 +69,13 @@ namespace Awakening.Professions
 
         private void ApplyProfessionModifiers(ProfessionData profession)
         {
-            if (_playerStats == null) return;
+            AcquirePlayerStats();
+
+            if (_playerStats == null)
+            {
+                Debug.LogError("[ProfessionSystem] Cannot apply modifiers: PlayerStats component not found in the scene!");
+                return;
+            }
 
             // Update Primary Attributes
             _playerStats.BonusVitality = profession.bonusVitality;
@@ -71,13 +88,15 @@ namespace Awakening.Professions
             _playerStats.BonusDefense = profession.bonusDefense;
             _playerStats.BonusSpeed = profession.bonusSpeed;
 
-            // Recalculate runtime stats
-            _playerStats.RecalculateStats(false);
+            // Recalculate runtime stats and refill HP/MP for immediate visual reward
+            _playerStats.RecalculateStats(true);
         }
 
         public void RemoveProfession()
         {
             _currentProfession = null;
+            AcquirePlayerStats();
+
             if (_playerStats != null)
             {
                 _playerStats.BonusVitality = 0f;
