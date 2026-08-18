@@ -124,6 +124,25 @@ namespace Awakening.Player
                     _leftHandSocket = socketObj.transform;
                 }
             }
+
+            // Fallback sockets directly on player root if no humanoid bone found
+            if (_rightHandSocket == null)
+            {
+                GameObject fallbackRight = new GameObject("Socket_RightHand_Fallback");
+                fallbackRight.transform.SetParent(transform, false);
+                fallbackRight.transform.localPosition = new Vector3(0.38f, -0.05f, 0.35f);
+                fallbackRight.transform.localRotation = Quaternion.identity;
+                _rightHandSocket = fallbackRight.transform;
+            }
+
+            if (_leftHandSocket == null)
+            {
+                GameObject fallbackLeft = new GameObject("Socket_LeftHand_Fallback");
+                fallbackLeft.transform.SetParent(transform, false);
+                fallbackLeft.transform.localPosition = new Vector3(-0.38f, -0.05f, 0.35f);
+                fallbackLeft.transform.localRotation = Quaternion.identity;
+                _leftHandSocket = fallbackLeft.transform;
+            }
         }
 
         private Transform FindDeepChild(Transform parent, string childName)

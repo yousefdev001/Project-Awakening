@@ -53,6 +53,7 @@ namespace Awakening.Core
 
         private void EnsureUIHUDs()
         {
+            EnsureComponent<ModernRPGCanvasHUD>();
             EnsureComponent<MainMenuUI>();
             EnsureComponent<PauseMenuUI>();
             EnsureComponent<GameOverUI>();
@@ -110,6 +111,7 @@ namespace Awakening.Core
             EnsureComponentOnObj<PlayerCombat>(playerObj);
             EnsureComponentOnObj<PlayerAnimation>(playerObj);
             EnsureComponentOnObj<PlayerVisualPresentation>(playerObj);
+            EnsureComponentOnObj<Awakening.Equipment.WeaponVisualManager>(playerObj);
             EnsureComponentOnObj<Awakening.Professions.ProfessionSystem>(playerObj);
             EnsureComponentOnObj<InventorySystem>(playerObj);
             EnsureComponentOnObj<Awakening.Equipment.EquipmentSystem>(playerObj);
