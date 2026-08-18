@@ -75,6 +75,17 @@ namespace Awakening.Quests
             data.state = QuestState.NotStarted;
             return data;
         }
+
+        public static QuestData CreatePresetByID(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
+
+            if (id.Contains("GOBLIN"))
+            {
+                return CreateGoblinIncursionQuestPreset();
+            }
+            return CreateForestWolvesQuestPreset();
+        }
         #endregion
     }
 }

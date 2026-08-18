@@ -156,6 +156,28 @@ namespace Awakening.Equipment
             return true;
         }
 
+        public void DirectEquip(ItemData item)
+        {
+            if (item == null) return;
+            AcquireReferences();
+
+            switch (item.equipmentSlot)
+            {
+                case EquipmentSlotType.Weapon:
+                    _equippedWeapon = item;
+                    break;
+                case EquipmentSlotType.Armor:
+                    _equippedArmor = item;
+                    break;
+                case EquipmentSlotType.Accessory:
+                    _equippedAccessory = item;
+                    break;
+            }
+
+            RecalculateEquipmentBonuses();
+            OnEquipmentChanged?.Invoke();
+        }
+
         public void RecalculateEquipmentBonuses()
         {
             AcquireReferences();

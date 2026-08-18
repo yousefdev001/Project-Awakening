@@ -141,5 +141,38 @@ namespace Awakening.Quests
             OnQuestListChanged?.Invoke();
             return true;
         }
+
+        public void ClearAndRestoreQuests(List<Awakening.Persistence.QuestSaveData> savedQuests)
+        {
+            _activeQuests.Clear();
+            _completedQuests.Clear();
+
+            if (savedQuests != null)
+            {
+                foreach (var qSave in savedQuests)
+                {
+                    QuestData template = QuestData.CreatePresetByID(qSave.questID);
+                    if (template != null)
+                    {
+                        QuestData runtimeQuest = template.CreateRuntimeClone();
+                        runtimeQuest.currentAmount = qSave.currentAmount;
+                        if (Enum.TryParse<QuestState>(qSave.state, out var parsedState))
+                        {
+                            runtimeQuest.state = parsedState;
+                        }
+
+                        if (runtimeQuest.state == QuestState.Completed)
+                        {
+                            _completedQuests.Add(runtimeQuest);
+                        }
+                        else
+                        {
+                            _activeQuests.Add(runtimeQuest);
+                        }
+                    }
+                }
+            }
+            OnQuestListChanged?.Invoke();
+        }
     }
 }

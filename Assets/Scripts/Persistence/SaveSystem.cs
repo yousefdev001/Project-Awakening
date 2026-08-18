@@ -92,7 +92,15 @@ namespace Awakening.Persistence
                     }
                 }
 
-                // 4. Save Quests
+                // 4. Save Equipment
+                if (EquipmentSystem.Instance != null)
+                {
+                    if (EquipmentSystem.Instance.EquippedWeapon != null) data.equipment.weaponID = EquipmentSystem.Instance.EquippedWeapon.itemID;
+                    if (EquipmentSystem.Instance.EquippedArmor != null) data.equipment.armorID = EquipmentSystem.Instance.EquippedArmor.itemID;
+                    if (EquipmentSystem.Instance.EquippedAccessory != null) data.equipment.accessoryID = EquipmentSystem.Instance.EquippedAccessory.itemID;
+                }
+
+                // 5. Save Quests (Active and Completed)
                 if (QuestManager.Instance != null)
                 {
                     foreach (var quest in QuestManager.Instance.ActiveQuests)
@@ -104,9 +112,18 @@ namespace Awakening.Persistence
                             state = quest.state.ToString()
                         });
                     }
+                    foreach (var quest in QuestManager.Instance.CompletedQuests)
+                    {
+                        data.quests.Add(new QuestSaveData
+                        {
+                            questID = quest.questID,
+                            currentAmount = quest.currentAmount,
+                            state = quest.state.ToString()
+                        });
+                    }
                 }
 
-                // 5. Save World Boss State
+                // 6. Save World Boss State
                 if (GoblinChiefBoss.Instance != null)
                 {
                     data.bossDefeated = GoblinChiefBoss.Instance.IsDefeated;
@@ -165,7 +182,21 @@ namespace Awakening.Persistence
                     PlayerStats.Instance.RestoreMana(data.stats.currentMana);
                 }
 
-                // 2. Restore Inventory Items (Clear and repopulate)
+                // 2. Restore Profession & Awakening
+                if (ProfessionSystem.Instance != null && data.profession != null && !string.IsNullOrEmpty(data.profession.professionID))
+                {
+                    ProfessionData prof = ScriptableObject.CreateInstance<ProfessionData>();
+                    prof.professionID = data.profession.professionID;
+                    prof.professionName = data.profession.professionName;
+                    prof.weaponAffinity = data.profession.weaponAffinity;
+                    if (Enum.TryParse<ProfessionRank>(data.profession.rank, out var rank))
+                    {
+                        prof.rank = rank;
+                    }
+                    ProfessionSystem.Instance.AssignProfession(prof);
+                }
+
+                // 3. Restore Inventory Items (Clear and repopulate)
                 if (InventorySystem.Instance != null && data.inventoryItems != null)
                 {
                     InventorySystem.Instance.ClearInventory();
@@ -177,6 +208,27 @@ namespace Awakening.Persistence
                             InventorySystem.Instance.AddItem(item, itemSave.quantity);
                         }
                     }
+                }
+
+                // 4. Restore Equipment
+                if (EquipmentSystem.Instance != null && data.equipment != null)
+                {
+                    if (!string.IsNullOrEmpty(data.equipment.weaponID))
+                    {
+                        ItemData wep = ItemData.CreatePresetByID(data.equipment.weaponID);
+                        if (wep != null) EquipmentSystem.Instance.DirectEquip(wep);
+                    }
+                    if (!string.IsNullOrEmpty(data.equipment.armorID))
+                    {
+                        ItemData arm = ItemData.CreatePresetByID(data.equipment.armorID);
+                        if (arm != null) EquipmentSystem.Instance.DirectEquip(arm);
+                    }
+                }
+
+                // 5. Restore Quests
+                if (QuestManager.Instance != null && data.quests != null)
+                {
+                    QuestManager.Instance.ClearAndRestoreQuests(data.quests);
                 }
 
                 Debug.Log($"<color=#00D4FF>📂 [SaveSystem]</color> Game loaded successfully! (Saved at: {data.saveTimestamp})");

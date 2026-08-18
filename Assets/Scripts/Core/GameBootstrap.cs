@@ -42,6 +42,8 @@ namespace Awakening.Core
             EnsureComponent<Awakening.Audio.AudioManager>();
             EnsureComponent<Awakening.VFX.VFXManager>();
             EnsureComponent<Awakening.Persistence.SaveSystem>();
+            EnsureComponent<Awakening.Professions.AwakeningController>();
+            EnsureComponent<Awakening.Professions.ProfessionRandomizer>();
             EnsureComponent<WorldZoneCoordinator>();
             EnsureComponent<VillageGenerator>();
             EnsureComponent<ForestGenerator>();
@@ -55,6 +57,7 @@ namespace Awakening.Core
             EnsureComponent<PauseMenuUI>();
             EnsureComponent<GameOverUI>();
             EnsureComponent<VictoryCreditsUI>();
+            EnsureComponent<AwakeningScreenUI>();
             EnsureComponent<DialogueUI>();
             EnsureComponent<InteractionPromptUI>();
             EnsureComponent<QuestTrackerHUD>();
@@ -76,23 +79,52 @@ namespace Awakening.Core
             EnsureComponent<MonsterSpawnerDebug>();
             EnsureComponent<CombatDebugDisplay>();
             EnsureComponent<LootDebugDisplay>();
+            EnsureComponent<AwakeningDebugTrigger>();
         }
 
         private void EnsurePlayerComponents()
         {
-            PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
-            if (player != null)
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj == null)
             {
-                if (player.GetComponent<PlayerInteraction>() == null)
-                {
-                    player.gameObject.AddComponent<PlayerInteraction>();
-                }
-
-                if (player.GetComponent<QuestManager>() == null)
-                {
-                    player.gameObject.AddComponent<QuestManager>();
-                }
+                PlayerMovement existingMovement = FindFirstObjectByType<PlayerMovement>();
+                if (existingMovement != null) playerObj = existingMovement.gameObject;
             }
+
+            if (playerObj == null)
+            {
+                // Create Player GameObject if none exists in scene
+                playerObj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                playerObj.name = "Player";
+                playerObj.tag = "Player";
+                playerObj.transform.position = new Vector3(0, 0.5f, 2.0f);
+            }
+
+            // Ensure full player component stack
+            EnsureComponentOnObj<CharacterController>(playerObj);
+            EnsureComponentOnObj<PlayerMovement>(playerObj);
+            EnsureComponentOnObj<PlayerStats>(playerObj);
+            EnsureComponentOnObj<PlayerProgression>(playerObj);
+            EnsureComponentOnObj<HealthSystem>(playerObj);
+            EnsureComponentOnObj<HitboxDetector>(playerObj);
+            EnsureComponentOnObj<PlayerCombat>(playerObj);
+            EnsureComponentOnObj<PlayerAnimation>(playerObj);
+            EnsureComponentOnObj<Awakening.Professions.ProfessionSystem>(playerObj);
+            EnsureComponentOnObj<InventorySystem>(playerObj);
+            EnsureComponentOnObj<Awakening.Equipment.EquipmentSystem>(playerObj);
+            EnsureComponentOnObj<PlayerWallet>(playerObj);
+            EnsureComponentOnObj<PlayerInteraction>(playerObj);
+            EnsureComponentOnObj<QuestManager>(playerObj);
+        }
+
+        private T EnsureComponentOnObj<T>(GameObject target) where T : Component
+        {
+            T comp = target.GetComponent<T>();
+            if (comp == null)
+            {
+                comp = target.AddComponent<T>();
+            }
+            return comp;
         }
 
         private T EnsureComponent<T>() where T : Component

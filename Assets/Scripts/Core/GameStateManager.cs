@@ -13,7 +13,7 @@ namespace Awakening.Core
         public static GameStateManager Instance { get; private set; }
 
         [Header("Initial State")]
-        [SerializeField] private GameState _initialState = GameState.Gameplay;
+        [SerializeField] private GameState _initialState = GameState.MainMenu;
 
         public GameState CurrentState { get; private set; }
         public GameState PreviousState { get; private set; }

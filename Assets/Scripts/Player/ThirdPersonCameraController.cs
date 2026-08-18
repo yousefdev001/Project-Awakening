@@ -110,12 +110,6 @@ namespace Awakening.Player
                 _targetPitch -= look.y * _config.mouseSensitivity;
                 _targetPitch = Mathf.Clamp(_targetPitch, _config.minPitch, _config.maxPitch);
             }
-
-            // Unlock cursor on Esc click if desired
-            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                LockCursor(Cursor.lockState != CursorLockMode.Locked);
-            }
         }
 
         private void UpdateCameraTransform()
