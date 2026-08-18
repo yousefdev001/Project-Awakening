@@ -6,6 +6,7 @@ namespace Awakening.GameDebug
 {
     /// <summary>
     /// Debug panel to view Player Gold balance and spawn test world loot items.
+    /// Safely positioned on the screen to prevent clipping on smaller resolutions.
     /// </summary>
     public class LootDebugDisplay : MonoBehaviour
     {
@@ -17,34 +18,34 @@ namespace Awakening.GameDebug
 
             PlayerWallet wallet = PlayerWallet.Instance;
 
-            int boxW = 210;
-            int boxH = 150;
-            int boxX = Screen.width - 220;
-            int boxY = 480;
+            int boxW = 260;
+            int boxH = 140;
+            int boxX = 10;
+            int boxY = 420;
 
-            GUI.Box(new Rect(boxX, boxY, boxW, boxH), "💰 Loot & Currency (Phase 15)");
+            GUI.Box(new Rect(boxX, boxY, boxW, boxH), "💰 Loot & Currency Spawner (Phase 15)");
 
             int currentGold = wallet != null ? wallet.Gold : 0;
-            GUI.Label(new Rect(boxX + 10, boxY + 25, boxW - 20, 22), $"Gold Balance: <color=#FFD700><b>{currentGold} 🪙</b></color>");
+            GUI.Label(new Rect(boxX + 10, boxY + 25, boxW - 20, 22), $"Player Gold: <color=#FFD700><b>{currentGold} 🪙</b></color>");
 
-            int btnY = boxY + 52;
-            if (GUI.Button(new Rect(boxX + 10, btnY, 90, 24), "+100 Gold"))
+            int btnY = boxY + 50;
+            if (GUI.Button(new Rect(boxX + 10, btnY, 115, 24), "+100 Gold"))
             {
                 if (wallet != null) wallet.AddGold(100);
             }
 
-            if (GUI.Button(new Rect(boxX + 105, btnY, 95, 24), "-50 Gold"))
+            if (GUI.Button(new Rect(boxX + 135, btnY, 115, 24), "-50 Gold"))
             {
                 if (wallet != null) wallet.SpendGold(50);
             }
 
             int btnY2 = btnY + 28;
-            if (GUI.Button(new Rect(boxX + 10, btnY2, boxW - 20, 24), "🧪 Drop Health Potion"))
+            if (GUI.Button(new Rect(boxX + 10, btnY2, 115, 24), "🧪 Drop Potion"))
             {
                 SpawnTestItem(ItemData.CreateHealthPotionPreset());
             }
 
-            if (GUI.Button(new Rect(boxX + 10, btnY2 + 26, boxW - 20, 24), "🐺 Drop Wolf Fur"))
+            if (GUI.Button(new Rect(boxX + 135, btnY2, 115, 24), "🐺 Drop Fur"))
             {
                 SpawnTestItem(ItemData.CreateWolfFurPreset());
             }
