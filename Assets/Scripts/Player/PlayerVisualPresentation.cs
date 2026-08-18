@@ -37,8 +37,6 @@ namespace Awakening.Player
 
         private void SetupVisualModel()
         {
-        private void SetupVisualModel()
-        {
             if (_animatorController == null)
             {
                 _animatorController = Resources.Load<RuntimeAnimatorController>("Animations/PlayerAnimatorController");
@@ -106,38 +104,39 @@ namespace Awakening.Player
 
         private void SetupEquipmentSockets(Transform modelRoot)
         {
-            if (modelRoot == null) return;
-
-            // Search for humanoid hand bones
-            if (_rightHandSocket == null)
+            if (modelRoot != null)
             {
-                Transform rightHandBone = FindDeepChild(modelRoot, "mixamorig:RightHand") 
-                                       ?? FindDeepChild(modelRoot, "RightHand")
-                                       ?? FindDeepChild(modelRoot, "Hand.R");
-
-                if (rightHandBone != null)
+                // Search for humanoid hand bones
+                if (_rightHandSocket == null)
                 {
-                    GameObject socketObj = new GameObject("Socket_RightHand");
-                    socketObj.transform.SetParent(rightHandBone);
-                    socketObj.transform.localPosition = Vector3.zero;
-                    socketObj.transform.localRotation = Quaternion.identity;
-                    _rightHandSocket = socketObj.transform;
+                    Transform rightHandBone = FindDeepChild(modelRoot, "mixamorig:RightHand") 
+                                           ?? FindDeepChild(modelRoot, "RightHand")
+                                           ?? FindDeepChild(modelRoot, "Hand.R");
+
+                    if (rightHandBone != null)
+                    {
+                        GameObject socketObj = new GameObject("Socket_RightHand");
+                        socketObj.transform.SetParent(rightHandBone);
+                        socketObj.transform.localPosition = Vector3.zero;
+                        socketObj.transform.localRotation = Quaternion.identity;
+                        _rightHandSocket = socketObj.transform;
+                    }
                 }
-            }
 
-            if (_leftHandSocket == null)
-            {
-                Transform leftHandBone = FindDeepChild(modelRoot, "mixamorig:LeftHand")
-                                      ?? FindDeepChild(modelRoot, "LeftHand")
-                                      ?? FindDeepChild(modelRoot, "Hand.L");
-
-                if (leftHandBone != null)
+                if (_leftHandSocket == null)
                 {
-                    GameObject socketObj = new GameObject("Socket_LeftHand");
-                    socketObj.transform.SetParent(leftHandBone);
-                    socketObj.transform.localPosition = Vector3.zero;
-                    socketObj.transform.localRotation = Quaternion.identity;
-                    _leftHandSocket = socketObj.transform;
+                    Transform leftHandBone = FindDeepChild(modelRoot, "mixamorig:LeftHand")
+                                          ?? FindDeepChild(modelRoot, "LeftHand")
+                                          ?? FindDeepChild(modelRoot, "Hand.L");
+
+                    if (leftHandBone != null)
+                    {
+                        GameObject socketObj = new GameObject("Socket_LeftHand");
+                        socketObj.transform.SetParent(leftHandBone);
+                        socketObj.transform.localPosition = Vector3.zero;
+                        socketObj.transform.localRotation = Quaternion.identity;
+                        _leftHandSocket = socketObj.transform;
+                    }
                 }
             }
 
@@ -163,6 +162,8 @@ namespace Awakening.Player
 
         private Transform FindDeepChild(Transform parent, string childName)
         {
+            if (parent == null) return null;
+
             foreach (Transform child in parent)
             {
                 if (child.name.Equals(childName, System.StringComparison.OrdinalIgnoreCase))
